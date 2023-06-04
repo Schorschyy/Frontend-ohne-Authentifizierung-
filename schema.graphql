@@ -1,0 +1,307 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+interface Error {
+    message: String!
+}
+
+"The node interface is implemented by entities that have a global unique identifier."
+interface Node {
+    id: ID!
+}
+
+union UpdateExpertError = ExpertNotFoundError
+
+union UpdateExpertSkillsError = ExpertNotFoundError | SkillNotFoundError
+
+union UpsertSkillsError = InvalidSkillUpdateError
+
+type AddExpertPayload {
+    expert: Expert
+}
+
+type Expert implements Node {
+    email: String
+    headExpert: Expert
+    headExpertId: String
+    id: ID!
+    name: String
+    skills: [Skill!]!
+    teamMembers: [Expert!]!
+}
+
+type ExpertNotFoundError implements Error {
+    message: String!
+}
+
+type ExpertSkill {
+    expert: Expert!
+    expertId: String!
+    level: Int!
+    skill: Skill!
+    skillId: Long!
+}
+
+"A connection to a list of items."
+type ExpertsConnection {
+    "A list of edges."
+    edges: [ExpertsEdge!]
+    "A flattened list of the nodes."
+    nodes: [Expert!]
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+}
+
+"An edge in a connection."
+type ExpertsEdge {
+    "A cursor for use in pagination."
+    cursor: String!
+    "The item at the end of the edge."
+    node: Expert!
+}
+
+type InvalidSkillUpdateError implements Error {
+    message: String!
+}
+
+type Mutation {
+    addExpert: AddExpertPayload!
+    updateExpert(input: UpdateExpertInput!): UpdateExpertPayload!
+    updateExpertSkills(input: UpdateExpertSkillsInput!): UpdateExpertSkillsPayload!
+    upsertSkills(input: UpsertSkillsInput!): UpsertSkillsPayload!
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+    "When paginating forwards, the cursor to continue."
+    endCursor: String
+    "Indicates whether more edges exist following the set defined by the clients arguments."
+    hasNextPage: Boolean!
+    "Indicates whether more edges exist prior the set defined by the clients arguments."
+    hasPreviousPage: Boolean!
+    "When paginating backwards, the cursor to continue."
+    startCursor: String
+}
+
+type Query {
+    expertById(id: ID!): Expert!
+    experts(
+        "Returns the elements in the list that come after the specified cursor."
+        after: String,
+        "Returns the elements in the list that come before the specified cursor."
+        before: String,
+        "Returns the first _n_ elements from the list."
+        first: Int,
+        "Returns the last _n_ elements from the list."
+        last: Int,
+        where: ExpertFilterInput
+    ): ExpertsConnection
+    me: Expert!
+    "Fetches an object given its ID."
+    node(
+        "ID of the object."
+        id: ID!
+    ): Node
+    "Lookup nodes by a list of IDs."
+    nodes(
+        "The list of node IDs."
+        ids: [ID!]!
+    ): [Node]!
+    skillById(id: ID!): Skill!
+    skills(order: [SkillSortInput!], where: SkillFilterInput): [Skill!]!
+}
+
+type Skill implements Node {
+    childSkills: [Skill!]!
+    expertSkills: [ExpertSkill!]!
+    id: ID!
+    name: String!
+    parentSkill: Skill
+    parentSkillId: ID
+}
+
+type SkillNotFoundError implements Error {
+    message: String!
+}
+
+type SkillUpdateResult {
+    childSkills: [Skill!]!
+    expertSkills: [ExpertSkill!]!
+    id: ID!
+    name: String!
+    parentSkill: Skill
+    parentSkillId: ID
+    referenceId: String!
+}
+
+type UpdateExpertPayload {
+    errors: [UpdateExpertError!]
+    expert: Expert
+}
+
+type UpdateExpertSkillsPayload {
+    errors: [UpdateExpertSkillsError!]
+    expert: Expert
+}
+
+type UpsertSkillsPayload {
+    errors: [UpsertSkillsError!]
+    skillUpdateResult: [SkillUpdateResult!]
+}
+
+enum Action {
+    CREATE
+    DELETE
+    UPDATE
+}
+
+enum ApplyPolicy {
+    AFTER_RESOLVER
+    BEFORE_RESOLVER
+    VALIDATION
+}
+
+enum SortEnumType {
+    ASC
+    DESC
+}
+
+"The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1."
+scalar Long
+
+input ExpertFilterInput {
+    and: [ExpertFilterInput!]
+    expertSkills: ListFilterInputTypeOfExpertSkillFilterInput
+    headExpert: ExpertFilterInput
+    headExpertId: StringOperationFilterInput
+    id: StringOperationFilterInput
+    or: [ExpertFilterInput!]
+    teamMembers: ListFilterInputTypeOfExpertFilterInput
+}
+
+input ExpertSkillFilterInput {
+    and: [ExpertSkillFilterInput!]
+    expert: ExpertFilterInput
+    expertId: StringOperationFilterInput
+    level: IntOperationFilterInput
+    or: [ExpertSkillFilterInput!]
+    skill: SkillFilterInput
+    skillId: LongOperationFilterInput
+}
+
+input IdOperationFilterInput {
+    eq: ID
+    in: [ID]
+    neq: ID
+    nin: [ID]
+}
+
+input IntOperationFilterInput {
+    eq: Int
+    gt: Int
+    gte: Int
+    in: [Int]
+    lt: Int
+    lte: Int
+    neq: Int
+    ngt: Int
+    ngte: Int
+    nin: [Int]
+    nlt: Int
+    nlte: Int
+}
+
+input ListFilterInputTypeOfExpertFilterInput {
+    all: ExpertFilterInput
+    any: Boolean
+    none: ExpertFilterInput
+    some: ExpertFilterInput
+}
+
+input ListFilterInputTypeOfExpertSkillFilterInput {
+    all: ExpertSkillFilterInput
+    any: Boolean
+    none: ExpertSkillFilterInput
+    some: ExpertSkillFilterInput
+}
+
+input ListFilterInputTypeOfSkillFilterInput {
+    all: SkillFilterInput
+    any: Boolean
+    none: SkillFilterInput
+    some: SkillFilterInput
+}
+
+input LongOperationFilterInput {
+    eq: Long
+    gt: Long
+    gte: Long
+    in: [Long]
+    lt: Long
+    lte: Long
+    neq: Long
+    ngt: Long
+    ngte: Long
+    nin: [Long]
+    nlt: Long
+    nlte: Long
+}
+
+input SkillFilterInput {
+    and: [SkillFilterInput!]
+    childSkills: ListFilterInputTypeOfSkillFilterInput
+    expertSkills: ListFilterInputTypeOfExpertSkillFilterInput
+    id: IdOperationFilterInput
+    name: StringOperationFilterInput
+    or: [SkillFilterInput!]
+    parentSkill: SkillFilterInput
+    parentSkillId: IdOperationFilterInput
+}
+
+input SkillSortInput {
+    id: SortEnumType
+    name: SortEnumType
+    parentSkill: SkillSortInput
+    parentSkillId: SortEnumType
+}
+
+input SkillUpdateInput {
+    name: String!
+    "relay encoded id / invalid reference id none yet stored skill"
+    parentSkillReferenceId: String
+    "relay encoded id / invalid reference id none yet stored skill"
+    referenceId: String!
+    status: Action!
+}
+
+input StringOperationFilterInput {
+    and: [StringOperationFilterInput!]
+    contains: String
+    endsWith: String
+    eq: String
+    in: [String]
+    ncontains: String
+    nendsWith: String
+    neq: String
+    nin: [String]
+    nstartsWith: String
+    or: [StringOperationFilterInput!]
+    startsWith: String
+}
+
+input UpdateExpertInput {
+    id: ID!
+}
+
+input UpdateExpertSkillsInput {
+    expertId: ID!
+    skillIds: [ID!]!
+}
+
+input UpsertSkillsInput {
+    skills: [SkillUpdateInput!]!
+}
